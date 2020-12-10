@@ -1,0 +1,15 @@
+package Home;
+import java.util.*;
+import static java.lang.System.*;
+public class Permission {
+	
+	void user_permission() {
+		
+		while(true) {
+			
+			out.println("*****************************************************************************");
+			out.println("1. Search Bus\n2. Check Seat Availability\n3. Book Ticket\n4. Log out");
+			out.println("*****************************************************************************");
+		}
+	}
+}

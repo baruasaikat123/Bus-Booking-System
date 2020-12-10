@@ -1,0 +1,616 @@
+package Home;
+import java.util.*;
+import static java.lang.System.*;
+import java.sql.*;
+public class Admin {
+	
+	static Scanner sc = new Scanner(System.in);
+	String email;
+	void setDetail(String email) {
+		
+		this.email = email;
+	}
+	static boolean bus_validate(int busNumber) throws Exception {
+		
+		Connection con = Main.database_connect();
+		Statement st = con.createStatement();
+       	 String query = "SELECT bus_no FROM bus_info";
+       	 ResultSet r2 = st.executeQuery(query);
+       	 while(r2.next()) {
+       		 
+       		 if(busNumber==r2.getInt(1)) {
+       			 
+       			 return true;
+       		 }      
+       	 }
+         return false;    
+	}
+	void admin_fun()throws Exception{
+		
+		Connection con = Main.database_connect();
+		Statement st = con.createStatement();
+		String query;
+		ResultSet r1;
+		
+		while(true) {
+			
+			out.println("***************************************");
+			out.println("1. Add a new Bus\n2. See All Busses\n3. See All Users\n4. See All Passenger Detail\n5. Change Password\n6. Add another Admin\n7. Modify Bus Detail\n8. Add Seat Numbers.\n9. Log out");
+			out.println("***************************************");
+	
+			out.print("Enter choice: ");
+			
+			int choice = sc.nextInt();
+			sc.nextLine();
+			switch(choice) {
+			
+			     case 1: out.println("*********Enter Bus Details**********");
+			             try {
+			             out.print("Bus No = ");
+			             int busNo = sc.nextInt();
+			             sc.nextLine();
+			             out.print("Bus Name = ");
+			             String busName = sc.nextLine();
+			             out.print("Source = ");
+			             String source = sc.nextLine();
+			             out.print("Destination = ");
+			             String destination = sc.nextLine();
+			             out.print("Price = ");
+			             int amount = sc.nextInt();
+			             sc.nextLine();
+			             out.print("Journey Date = ");
+			             String date = sc.nextLine();
+			             out.print("Timing = ");
+			             String time = sc.nextLine();
+			             out.print("Total Seats Available = ");
+			             int totalSeat = sc.nextInt();
+			             sc.nextLine();
+			             out.print("Are you sure?(press 'Y' to add or 'N' to cancel): ");
+       	        	     String confirm = sc.nextLine();
+                         if(confirm.equalsIgnoreCase("Y")) {
+                       	
+                        	 query = "INSERT INTO bus_info VALUES(" +busNo+ ",'" +busName+ "','" +source+ "','" +destination+ "'," +amount+ ",'" +date+ "','" +time+ "'," +totalSeat+ ")";
+    			             st.executeUpdate(query);
+    			             out.println("Message: Bus added successfully!!!");
+                            
+                         }
+                         else if(confirm.equalsIgnoreCase("N")){
+                       	
+                       	     out.println("Message: Operation Failed!!!");
+                         }
+                         else {
+                           	  
+                           	out.println("Warning: Please Enter a valid option.");
+                         }
+			             
+			             }
+			             catch(Exception e1) {
+			            	 
+			            	 out.println(e1);
+			             }
+			            
+			             break;
+			             
+			     case 2: out.println("                                        *********** BUS Details **********");
+			             query = "SELECT * FROM bus_info";
+			             r1 = st.executeQuery(query);
+			 			 out.println("**********************************************************************************************************************************");
+			 			 out.println("Bus No.     Bus Name       Bus Source     Bus Destination      Price        Journey Date          timing         Available Seats");
+			 			 out.println("**********************************************************************************************************************************");
+			 			 while(r1.next()) {
+			 				 
+			 				String busData = r1.getString(1)+"         "+r1.getString(2)+"          "+r1.getString(3)+"             "+r1.getString(4)+"               "+r1.getString(5)+"          "+r1.getString(6)+"           "+r1.getString(7)+"             "+r1.getString(8);
+						    out.println(busData);
+			 			 }
+			 			 out.println("***********************************************************************************************************************************");
+			             break;
+			     
+			     case 3: out.println("                             ********** Details of All Registered **********              ");
+			             query = "SELECT * FROM user_info";
+			             r1 = st.executeQuery(query);
+			             out.println("**************************************************************************************************************************************");
+			             out.println("Email ID                          First Name              Last Name             Gender                Address              Mobile No");
+			             out.println("**************************************************************************************************************************************");
+			             while(r1.next()) {
+			            	 
+			            	 String userData = r1.getString(1)+"             "+r1.getString(2)+"                  "+r1.getString(3)+"                  "+r1.getString(4)+"                "+r1.getString(5)+"             "+r1.getString(6);
+			            	 out.println(userData);
+			             }
+			             out.println("*************************************************************************************************************************************");
+			             break;
+			             
+			     case 4:  query = "SELECT * FROM passenger_info";
+			              r1 = st.executeQuery(query);
+			              out.println("                            *********** Details of All Booking History of Passengers***********       ");
+			              out.println("*************************************************************************************************************************************************************");
+					      out.println("Booing Id          Bus No       Bus Name         Passenger Name(s)        Seat No            Journey Date             Booking Date                   Email Id");
+					      out.println("*************************************************************************************************************************************************************");
+					      query = "SELECT * FROM booking_detail";
+					      r1= st.executeQuery(query);
+					      while(r1.next()) {
+					        	
+					        	out.println(r1.getInt(1)+"                   "+r1.getInt(2)+"          "+r1.getString(3)+"           "+r1.getString(4)+"                "+r1.getInt(5)+"                "+r1.getString(6)+"              "+r1.getString(7)+"                "+r1.getString(8));
+					      }
+					      out.println("************************************************************************************************************************************************************");
+					      break;
+					      
+			     case 5:  out.print("Enter current password: ");
+			              String old_pass = sc.nextLine();
+			              query = "SELECT password FROM admin WHERE email_id='" +email+ "'";
+			              r1 = st.executeQuery(query);
+			              r1.next();
+			              String password = r1.getString(1);
+			              if(old_pass.equals(password)) {
+			        	
+			        	       out.print("Enter new password: ");
+ 				               String new_pass = sc.nextLine();
+ 				               if(old_pass.equals(new_pass)) {
+ 				    	
+ 				    	           out.println("Warning: Old and New Password can not be same!!!");
+ 				               }
+ 				               else {
+ 				    	           
+ 				 	               out.print("Are you sure?(press 'Y' to update or 'N' to cancel): ");
+ 		       	        	       String confirm = sc.nextLine();
+ 		                           if(confirm.equalsIgnoreCase("Y")) {
+ 		                       	
+ 		                        	   query = "UPDATE admin SET password='" +new_pass+ "' WHERE email_id='" +email+ "'";
+ 	     				               st.executeUpdate(query);
+ 	     				               out.println("Message: Successfully Updated!!!");
+ 		                            
+ 		                           }
+ 		                           else if(confirm.equalsIgnoreCase("N")){
+ 		                       	
+ 		                       	       out.println("Message: Operation Failed!!!");
+ 		                           }
+ 		                           else {
+ 		                           	  
+ 		                           	  out.println("Warning: Please Enter a valid option.");
+ 		                          				    	          
+ 				                   }
+ 				              }
+ 				    
+			              }
+			              else {
+			        	
+			        	       out.println("Warning: Current password does not match!!!");
+			              }
+			       
+			              break;
+			              
+			     case 6: if(email.equals("saikat123@gmail.com")) {
+			    	 
+			    	             out.println("***************** Enter Following Details ******************");
+		                         out.print("Enter First Name = ");
+		                         String fname = sc.nextLine();
+		                         out.print("Enter Last Name = ");
+		                         String lname = sc.nextLine();
+		                         out.print("Enter Email Id = ");
+		                         String email = sc.nextLine();
+		                         out.print("Enter a default password for this admin: ");
+		                         String password1 = sc.nextLine();
+		                         try {
+		            	 
+		            	               query = "INSERT INTO admin VALUES('" +email+ "','" +fname+ "','" +lname+ "','" +password1+ "')";
+		            	               st.executeUpdate(query);
+		            	               out.println("Message: The email id "+email+" is now successfully registered as an Admin.");
+		            	 
+		                         }
+		                         catch(Exception e2){
+		            	 
+		            	               out.println("Warning: Sorry!!! This Email Id already exists.");
+		            	 
+		                         }
+			    	 
+			             }
+			             else {
+			            	 
+			            	 out.println("Warning: Access Defined!!!");
+			             }
+			             break;
+			             
+			     case 7: out.println("******* Choose a option to Modify ********");
+			             int go_back=0, busNumber;
+			             boolean check;
+			             while(true) {
+			            	 out.println("************************************");
+			            	 out.println("1. Remove a particular bus\n2. Update Bus Details\n3. Go Back");
+			            	 out.println("************************************");
+			            	 out.print("Enter choice: ");
+				             int ch = sc.nextInt();
+				             sc.nextLine();
+			                 switch(ch) {
+			                  
+			                     case 1: out.print("Please Enter the bus number carefully: ");
+			                             busNumber = sc.nextInt();
+			                             sc.nextLine();   	 
+			                    	     check = bus_validate(busNumber);
+			                             if(check==true) {
+			                            	 
+			                            	 out.print("Are you sure?(press 'Y' to delete or 'N' to cancel)");
+				                             //char confirm = sc.next().charAt(0);
+				                             String confirm = sc.nextLine();
+				                             if(confirm.equalsIgnoreCase("Y")) {
+				                        	
+				                        	      query = "DELETE FROM bus_info WHERE bus_no=" +busNumber+ "";
+				                                  st.executeUpdate(query);
+				                                  out.println("Message: Successfully Removed!!!");
+				                              }
+				                              else if(confirm.equalsIgnoreCase("N")){
+				                        	
+				                        	      out.println("Message: Deletion is unsuccessful!!!");
+				                              }
+				                              else {
+				                            	  
+				                            	  out.println("Warning: Please Enter a valid option.");
+				                              }
+			                             }
+			                             else {
+			                            	 
+			                            	 out.println("Warning: Bus Number you have entered is invalid!!!");
+			                             }
+			                            
+			                             break;
+			                             
+			                              
+			                   case 2: out.println("************ Choose a Particular Option to Update ***********");
+			                           int go_back_sub = 0;
+			                           while(true) {
+			                        	   
+			                        	   out.println("******************************");
+			                        	   out.println("1. Bus Source\n2. Bus Destination\n3. Bus Journey Date\n4. Bus Departure Time\n5. Bus Seats\n6. Bus Price\n7. Go Back");
+			                        	   out.println("******************************");
+			                        	   out.print("Enter choice: ");
+			                        	   int ch1 = sc.nextInt();
+			                        	   sc.nextLine();
+			                        	   switch(ch1) {
+			                        	   
+			                        	      case 1: out.print("Please Enter the bus number carefully: ");
+					                                  busNumber = sc.nextInt();
+				                                      sc.nextLine();   	 
+					                    	          check = bus_validate(busNumber);
+					                    	          if(check==true) {
+					                    	        	  
+					                    	        	  out.print("Enter the new source = ");
+					                    	        	  String new_source = sc.nextLine();
+					                    	        	  out.print("Are you sure?(press 'Y' to update or 'N' to cancel): ");
+					                    	        	  String confirm = sc.nextLine();
+								                          if(confirm.equalsIgnoreCase("Y")) {
+								                        	
+								                        	    query = "UPDATE bus_info SET bus_source='" +new_source+ "' WHERE bus_no=" +busNumber+ "";
+								                                st.executeUpdate(query);
+								                                out.println("Message: Successfully Updated!!!");
+								                          }
+								                          else if(confirm.equalsIgnoreCase("N")){
+								                        	
+								                        	    out.println("Message: Updation is unsuccessful!!!");
+								                          }
+								                          else {
+								                            	  
+								                            	out.println("Warning: Please Enter a valid option.");
+								                          }
+					                    	          }
+					                    	          else {
+					                    	        	  
+					                    	        	  out.println("Warning: Bus Number you have entered is invalid!!!");
+					                    	          }
+					                    	          break;
+					                    	          
+			                        	      case 2: out.print("Please Enter the bus number carefully: ");
+			                                          busNumber = sc.nextInt();
+			                                          sc.nextLine();
+			                                          check = bus_validate(busNumber);
+			                    	                  if(check==true) {
+			                    	        	  
+			                    	        	          out.print("Enter the new destination = ");
+			                    	        	          String new_destination = sc.nextLine();
+			                    	        	          out.print("Are you sure?(press 'Y' to update or 'N' to cancel): ");
+			                    	        	          String confirm = sc.nextLine();
+						                                  if(confirm.equalsIgnoreCase("Y")) {
+						                        	
+						                        	           query = "UPDATE bus_info SET bus_destination='" +new_destination+ "' WHERE bus_no=" +busNumber+ "";
+						                                       st.executeUpdate(query);
+						                                       out.println("Message: Successfully Updated!!!");
+						                                  }
+						                                  else if(confirm.equalsIgnoreCase("N")){
+						                        	
+						                        	           out.println("Message: Updation is unsuccessful!!!");
+						                                  }
+						                              else {
+						                            	  
+						                            	  out.println("Warning: Please Enter a valid option.");
+						                              }
+			                    	                }
+			                    	                else {
+			                    	        	  
+			                    	        	        out.println("Warning: Bus Number you have entered is invalid!!!");
+			                    	                }
+			                    	                break;
+			                    	                
+			                        	      case 3:  out.print("Please Enter the bus number carefully: ");
+	                                                   busNumber = sc.nextInt();
+	                                                   sc.nextLine();
+	                                                   check = bus_validate(busNumber);
+	                    	                           if(check==true) {
+	                    	        	  
+	                    	        	                    out.print("Enter the new journey date = ");
+	                    	        	                    String new_journey_date = sc.nextLine();
+	                    	        	                    out.print("Are you sure?(press 'Y' to update or 'N' to cancel)");
+	                    	        	                    String confirm = sc.nextLine();
+				                                            if(confirm.equalsIgnoreCase("Y")) {
+				                        	
+				                        	                      query = "UPDATE user_info SET journey_date='" +new_journey_date+ "' WHERE bus_no=" +busNumber+ "";
+				                                                  st.executeUpdate(query);
+				                                                  out.println("Message: Successfully Updated!!!");
+				                                            }
+				                                            else if(confirm.equalsIgnoreCase("N")){
+				                        	
+				                        	                     out.println("Message: Updation is unsuccessful!!!");
+				                                            }
+				                                            else {
+				                            	  
+				                            	                 out.println("Warning: Please Enter a valid option.");
+				                                            }
+	                    	                          }
+	                    	                          else {
+	                    	        	  
+	                    	        	                   out.println("Warning: Bus Number you have entered is invalid!!!");
+	                    	                          }
+	                    	                          break;
+	                    	                          
+			                        	      case 4:  out.print("Please Enter the bus number carefully: ");
+                                                       busNumber = sc.nextInt();
+                                                       sc.nextLine();
+                                                       check = bus_validate(busNumber);
+               	                                       if(check==true) {
+               	        	  
+               	        	                                out.print("Enter the new bus timing = ");
+               	        	                                String new_time = sc.nextLine();
+               	        	                                out.print("Are you sure?(press 'Y' to update or 'N' to cancel): ");
+               	        	                                String confirm = sc.nextLine();
+		                                                    if(confirm.equalsIgnoreCase("Y")) {
+		                        	
+		                        	                              query = "UPDATE bus_info SET timing='" +new_time+ "' WHERE bus_no=" +busNumber+ "";
+		                                                          st.executeUpdate(query);
+		                                                          out.println("Message: Successfully Updated!!!");
+		                                                    }
+		                                                    else if(confirm.equalsIgnoreCase("N")){
+		                        	
+		                        	                              out.println("Message: Updation is unsuccessful!!!");
+		                                                    }
+		                                                    else {
+		                            	  
+		                            	                          out.println("Warning: Please Enter a valid option.");
+		                                                    }
+               	                                       }
+               	                                       else {
+               	        	  
+               	        	                               out.println("Warning: Bus Number you have entered is invalid!!!");
+               	                                       }
+               	                                       break;
+               	                                       
+			                        	      case 5:  out.print("Please Enter the bus number carefully: ");
+                                                       busNumber = sc.nextInt();
+                                                       sc.nextLine();
+                                                       check = bus_validate(busNumber);
+               	                                       if(check==true) {
+               	        	  
+               	        	                                 out.print("Enter the modified total seats = ");
+               	        	                                 int new_seat = sc.nextInt();
+               	        	                                 sc.nextLine();
+               	        	                                 out.print("Are you sure?(press 'Y' to update or 'N' to cancel): ");
+               	        	                                 String confirm = sc.nextLine();
+		                                                     if(confirm.equalsIgnoreCase("Y")) {
+		                        	
+		                        	                                query = "UPDATE bus_info SET seat=" +new_seat+ " WHERE bus_no=" +busNumber+ "";
+		                                                            st.executeUpdate(query);
+		                                                            out.println("Message: Successfully Updated!!!");
+		                                                     }
+		                                                     else if(confirm.equalsIgnoreCase("N")){
+		                        	
+		                        	                               out.println("Message: Updation is unsuccessful!!!");
+		                                                     }
+		                                                     else {
+		                            	  
+		                            	                          out.println("Warning: Please Enter a valid option.");
+		                                                     }
+               	                                      }
+               	                                      else {
+               	        	  
+               	        	                             out.println("Warning: Bus Number you have entered is invalid!!!");
+               	                                      }
+               	                                      break;
+               	                                      
+			                        	      case 6: out.print("Please Enter the bus number carefully: ");
+                                                      busNumber = sc.nextInt();
+                                                      sc.nextLine();
+                                                      check = bus_validate(busNumber);
+      	                                              if(check==true) {
+      	        	  
+      	        	                                      out.print("Enter the new price = ");
+      	        	                                      int new_price = sc.nextInt();
+      	        	                                      sc.nextLine();
+      	        	                                      out.print("Are you sure?(press 'Y' to update or 'N' to cancel): ");
+      	        	                                      String confirm = sc.nextLine();
+                                                          if(confirm.equalsIgnoreCase("Y")) {
+                       	
+                       	                                       query = "UPDATE bus_info SET price=" +new_price+ " WHERE bus_no=" +busNumber+ "";
+                                                               st.executeUpdate(query);
+                                                               out.println("Message: Successfully Updated!!!");
+                                                          }
+                                                          else if(confirm.equalsIgnoreCase("N")){
+                       	
+                       	                                       out.println("Message: Updation is unsuccessful!!!");
+                                                          }
+                                                          else {
+                           	  
+                           	                                  out.println("Warning: Please Enter a valid option.");
+                                                          }
+      	                                            }
+      	                                            else {
+      	        	  
+      	        	                                  out.println("Warning: Bus Number you have entered is invalid!!!");
+      	                                            }
+      	                                            break;
+               	                                       
+               	                                       
+			                        	      
+			                        	    case 7: go_back_sub++;
+			                        	              break;
+			                        	      
+			                        	   }
+			                        	   if(go_back_sub>0) {
+			                        		   
+			                        		   go_back_sub=0;
+			                        		   break;
+			                        	   }
+			                           }
+			                           break;
+			                           
+			                   case 3: go_back++;
+			                           break;
+			                 }
+			                 if(go_back>0) {
+			                	 
+			                	 go_back=0;
+			                	 break;
+			                 }
+			             }
+			             break;
+			
+			        
+			     case 8:  out.print("Please Enter the bus number carefully: ");
+                          busNumber = sc.nextInt();
+                          sc.nextLine();
+                          int yes_bus=0, yes_seat=0;
+                          sc.nextLine();
+                          check = bus_validate(busNumber);
+                          if(check==true) {
+                     		  
+                        	  out.print("Total how many seats you want to add?: ");
+                        	  int total = sc.nextInt();
+                        	  sc.nextLine();
+                        	  query = "SELECT seat FROM bus_info WHERE bus_no=" +busNumber+ "";
+                        	  r1 = st.executeQuery(query);
+                        	  r1.next();
+                        	  if(total>r1.getInt(1)) {
+                        		  
+                        		  out.println("Sorry!!! You can not add more than "+r1.getInt(1)+" seats for this bus.");
+                        	  }
+                        	  else {
+                              out.print("Enter the seat numbers you want to add(separated by space): ");
+                              int new_no[] = new int[total];
+                              for(int i=0;i<total;i++) {
+                            	  
+                            	  new_no[i] = sc.nextInt();
+                              }
+                              query = "SELECT bus_no FROM seat_detail";
+                              r1 = st.executeQuery(query);
+                              while(r1.next()) {
+                            	  
+                            	  if(busNumber==r1.getInt(1)) {
+                            		  
+                            		  yes_bus=0;
+                            		  break;
+                            	  }
+                            	  else {
+                            		  
+                            		  yes_bus++;
+                            	  }
+                              }
+                              if(yes_bus>0) {
+                            	  
+                            	  //out.println("Message: This Seat Number already exists.");
+                            	  yes_bus= 0;
+                            	  query = "SELECT seat_number FROM seat_detail WHERE bus_no=" +busNumber+ "";
+                            	  r1 = st.executeQuery(query);
+                            	  for(int i=0;i<total;i++) {
+                            		  
+                            		  while(r1.next()) {
+                            			  
+                            			  if(new_no[i]==r1.getInt(1)) {
+                            				  
+                            				  yes_seat=0;
+                            				  break;
+                            			  }
+                            			  else {
+                            				  
+                            				  yes_seat++;
+                            			  }
+                            		  }
+                            		  if(yes_seat==0) {
+                            			  
+                            			  out.println("Message: This Seat Number already exists.")
+                            		  }
+                            		  else {
+                            			  
+                            			  yes_seat=0;
+                            			  query = "INSERT INTO seat_detail VALUES(" +busNumber+ "," +new_no[i]+ ")";
+                            			  st.executeUpdate(query);
+                            		  }
+                            	  }
+                            	  
+                              }
+                              else {
+                            	  
+                            	  
+                              }
+                              
+                              for(int i=0;i<total;i++) {
+                            	  
+                            	    while(r1.next()) {
+                                  	  
+                                  	  if(busNumber==r1.getInt(1)) {
+                                  		  
+                                      	 
+                                      	  ResultSet r2 = st.executeQuery(query);
+                                      	  if(new_no[i]!=r2.getInt(1)) {
+                                      		  
+                                      		
+                                      		  
+                                      	  }
+                                      	  else {
+                                     
+                                      	  }
+                                  	  }
+                                    }
+                              }
+                          
+                              
+                            	
+                            	  while(r1.next()) {
+                            		  
+                            		  if(new_no==)
+                            	  }
+                              }
+                              out.print("Are you sure?(press 'Y' to update or 'N' to cancel): ");
+                              String confirm = sc.nextLine();
+                              if(confirm.equalsIgnoreCase("Y")) {
+
+                            query = "UPDATE bus_info SET timing='" +new_time+ "' WHERE bus_no=" +busNumber+ "";
+                            st.executeUpdate(query);
+                            out.println("Message: Successfully Updated!!!");
+                      }
+                      else if(confirm.equalsIgnoreCase("N")){
+
+                            out.println("Message: Updation is unsuccessful!!!");
+                      }
+                      else {
+	  
+	                          out.println("Warning: Please Enter a valid option.");
+                      }
+                    }
+                    else {
+
+                        out.println("Warning: Bus Number you have entered is invalid!!!");
+                    }
+                    break;
+			     case 9: out.println("Message: Successfully Logged out!!!");
+			    	     Main.logout();
+			            
+			}
+			
+		}
+	}
+
+}

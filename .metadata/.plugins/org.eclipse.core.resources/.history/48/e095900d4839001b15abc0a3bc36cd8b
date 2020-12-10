@@ -1,0 +1,42 @@
+package Home;
+import java.util.*;
+import static java.lang.System.out;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+public class Login {
+	
+	Scanner sc = new Scanner(System.in);
+	
+	void login_detect()throws Exception {
+		
+		Connection con = Main.database_connect();
+		Statement st = con.createStatement();
+		
+		String query;
+		ResultSet r;
+		
+		out.print("Enter your email: ");
+        String email = sc.nextLine();
+        out.print("Enter your password: ");
+        String pass1 = sc.nextLine();
+        User u = new User(email,pass1);
+        try {
+        	
+        	query = "SELECT email_id,password FROM admin WHERE email_id='" +u.getEmail()+ "'";
+        	r = st.executeQuery(query);
+        	r.next();
+        	String e = r.getString(1);
+        	String p =r.getString(2);
+        	
+        	
+        }
+        catch(Exception e1) {
+        	
+        	
+        }
+	}
+
+}

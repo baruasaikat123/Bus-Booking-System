@@ -1,0 +1,25 @@
+package Home;
+import java.util.*;
+import static java.lang.System.*;
+public class User {
+	
+	String email_id;
+	String password;
+	
+	User(String email_id, String password) {
+		
+		
+		this.email_id = email_id;
+		this.password = password;
+	}
+	
+	String getEmail() {
+		
+		return email_id;
+	}
+	String getPassword() {
+		
+		return password;
+	
+	}
+}

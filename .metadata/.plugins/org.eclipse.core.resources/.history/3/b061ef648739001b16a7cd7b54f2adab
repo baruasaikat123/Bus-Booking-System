@@ -1,0 +1,12 @@
+package Home;
+
+public class Roll {
+	
+	int roll_id;
+	
+	void setRollId(int roll_id) {
+		
+		this.roll_id = roll_id;
+	}
+
+}

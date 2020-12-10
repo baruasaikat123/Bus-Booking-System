@@ -1,0 +1,42 @@
+package Home;
+import java.util.*;
+import static java.lang.System.*;
+public class User {
+	
+	//String first_name;
+	//String last_name;
+	//String mobile_number;
+	String email_id;
+	String password;
+	
+	User(String email_id, String password) {
+		
+		/*this.first_name = first_name;
+		this.last_name = last_name;
+		this.mobile_number = mobile_number;*/
+		this.email_id = email_id;
+		this.password = password;
+	}
+	
+	/*String getFirstName(String first_name) {
+		
+		return first_name;
+	}
+	String getLastName(String last_name) {
+		
+		return last_name;
+	}
+	String getMobileNumber(String mobile_number) {
+		
+		return mobile_number;
+	}*/
+	String getEmail() {
+		
+		return email_id;
+	}
+	String getPassword() {
+		
+		return password;
+	
+	}
+}

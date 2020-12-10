@@ -1,0 +1,31 @@
+package Home;
+
+import static java.lang.System.out;
+
+public class Registration {
+	
+	String fname;
+	String lname;
+	String mobile;
+	String email;
+	String pass1;
+	
+	void registration_detail()throws Exception {
+		
+		Connection con = Main.database_connect();
+		Statement st = con.createStatement();
+		out.print("Enter FirstName: ");
+        String fname = sc.nextLine();
+        out.print("Enter LastName: ");
+        String lname = sc.nextLine();
+        out.print("Enter mobile no: ");
+        String mobile = sc.nextLine();
+        out.print("Enter Email: ");
+        email = sc.nextLine();
+        out.print("Enter a password: ");
+        pass1 = sc.nextLine();
+        String query = "INSERT INTO user_info VALUES('" +email+ "','" +fname+ "', '" +lname+ "', '" +mobile+ "',+'" +pass1+ "')";
+        st.executeUpdate(query);
+	}
+
+}

@@ -1,0 +1,90 @@
+package Home;
+import java.util.*;
+import static java.lang.System.out;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+public class Login {
+	
+	Scanner sc = new Scanner(System.in);
+	User u = new User();
+	Admin a = new Admin();
+	void login_detect()throws Exception {
+		
+		Connection con = Main.database_connect();
+		Statement st = con.createStatement();
+		
+		String query;
+		ResultSet r;
+		
+		out.print("Enter your email: ");
+        String email = sc.nextLine();
+        out.print("Enter your password: ");
+        String pass1 = sc.nextLine();
+        u.setDetail(email, pass1);
+        try {
+        	
+        	query = "SELECT email_id,password FROM admin WHERE email_id='" +u.getEmail()+ "'";
+        	r = st.executeQuery(query);
+        	r.next();
+        	//String e = r.getString(1);
+        	String p = r.getString(2);
+        	query = "SELECT first_name FROM admin WHERE email_id='" +u.getEmail()+ "'";
+        	r = st.executeQuery(query);
+        	r.next();
+        	String user_name = r.getString(1);
+        	if(p.equals(u.getPassword())) {
+        		
+        		out.println("**************************** Welcome "+user_name+" **********************************");
+        		
+        		a.setDetail(u.getEmail());
+        		a.admin_fun();
+        	}
+        	else {
+        		
+        		out.println("Warning: Email Id and Password does not match.");
+        	}
+        	
+        }
+        catch(InputMismatchException e3) {
+    		
+    		out.println("Enter");
+    		a.admin_fun();
+    	}
+        catch(Exception e1) {
+        	
+        	try{
+        		
+        		query = "SELECT email_id,pass from user_info WHERE email_id='" +u.getEmail()+ "'";
+        		r = st.executeQuery(query);
+        		r.next();
+        		String p = r.getString(2);
+        		query = "SELECT first_name FROM user_info WHERE email_id='" +u.getEmail()+ "'";
+        		r = st.executeQuery(query);
+        		r.next();
+        		String user_name = r.getString(1);
+        		if(p.equals(u.getPassword())) {
+        			
+        			out.println("************************ Welcome "+user_name+" *********************************");
+        			u.user_fun();
+        		}
+        		else {
+        			
+        			out.println("Warning: Email Id and Password does not match.");
+        		}
+        	}
+            catch(InputMismatchException e) {
+        		
+        		out.println("Enter");
+        	}
+        	catch(Exception e2) {
+        		
+        		out.println("Message: Your email_id does not registered!!!");
+        	}
+        	
+        }
+	}
+
+}

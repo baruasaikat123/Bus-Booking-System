@@ -1,0 +1,159 @@
+package Home;
+import java.util.*;
+import static java.lang.System.*;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.*;
+public class Main {
+	
+	
+	public static void main(String args[])throws Exception {
+		
+		Scanner sc = new Scanner(System.in);
+		int sign=0, wrong_user=0;
+	
+		Connection con = Main.database_connect();
+		Statement st = con.createStatement();
+		ResultSet r;
+		
+		String email,pass1,query;
+		
+		while(true) {
+		
+			out.println("*******************************************");
+			out.println("1. Create New Account\n2. Login\n3. Exit");
+			out.println("*******************************************");
+			out.print("Enter choice: ");
+			int choice = sc.nextInt();
+			sc.nextLine();
+		    switch(choice) {
+		       case 1: Registration regi = new Registration();
+		               regi.registration_detail();
+		               break;
+		        
+		       case 2: out.print("Enter your email: ");
+		              email = sc.nextLine();
+		              out.print("Enter your password: ");
+		              pass1 = sc.nextLine();
+		              User u = new User(email,pass1);
+		              query = "SELECT email_id,pass from user_info";
+		              r = st.executeQuery(query);
+		              while(r.next()) {
+		            	  
+		            	  String e = r.getString(1);
+		            	  String p = r.getString(2);
+		            	  if(e.equals(u.getEmail()) && p.equals(u.getPassword())) {
+		            		  wrong_user=0;
+		            		  while(true) {
+		            				
+		            				//if(sign==0) {
+		            				out.println("**********************************************************************");
+		            				out.println("1. View Profile\n2. Edit Profile\n3. Change Password\n4. Search Bus\n5. Check Seat Availability\n6. Book Ticket\n7. See All Bookings\n8. Log out");
+		            				out.println("**********************************************************************");
+		            				out.print("Enter choice: ");
+		            				choice = sc.nextInt();
+		            				sc.nextLine();
+		            				switch(choice) {
+		            				
+		            				case 1: query = "SELECT email_id, first_name, last_name, gender, mobile_no, pass FROM user_info";
+		            				        ResultSet r2 = st.executeQuery(query);
+		            				        while(r2.next()) {
+		            				            		
+		            				            if(e.equals(r2.getString(1))) {
+		            				            			
+		            				            	out.println("Name = "+r2.getString(2)+" "+r2.getString(3));
+			            				            out.println("Gender = "+r2.getString(4));
+			            				            out.println("Mobile No = "+r2.getString(5));
+			            				            out.println("Email = "+r2.getString(1));
+			            				            break;
+		            				            }
+		            				            		
+		            				        }
+		            				        break;
+		            				        
+		            				case 4: Bus b = new Bus();
+		            					    b.search_bus();
+		            				        break;
+		            				
+		            				case 2: 
+		            				        break;
+		            				
+		            				case 3: out.print("Enter old password: ");
+		            				        String old_pass = sc.nextLine();
+		            				        if(old_pass.equals(p)) {
+		            				        	
+		            				        	out.print("Enter new password: ");
+				            				    String new_pass = sc.nextLine();
+				            				    query = "UPDATE user_info SET pass='" +new_pass+ "' WHERE email_id='" +e+ "'";
+				            				    st.executeUpdate(query);
+				            				    out.println("Message: Successfully Updated!!!");
+		            				        }
+		            				        else {
+		            				        	
+		            				        	out.println("Old Password does not match!!!")
+		            				        }
+		            				       
+		            				        break;
+		            				        
+		            				case 8: out.println("Successfully Logged out!!!");
+		            					    sign = 1;
+		            				        break;
+		            				
+		            				default: out.println("Warning: Please enter a valid choice.");
+		            				
+		            				}
+		            				//}
+		            				if(sign==1) {
+		            					
+		            					sign=0;
+		            					break;
+		            				}
+		            		  }
+		            		  break;		            		              		  
+		            	  }           	  
+		            	  else {
+		            		  
+		            		  wrong_user++;
+		            	  }
+		              }
+		              if(wrong_user>0) {
+		            	  
+		            	  out.println("Warning: Email_id or Password does not match.");
+		            	  wrong_user=0;
+		              }
+		              break;
+		              	        
+		      case 3: exit(0);
+		              
+		      
+		     /* case 4: query = "SELECT * FROM user_info";
+		              r = st.executeQuery(query);
+		              while(r.next()) {
+		            	  
+		            	  String userData = r.getString(1)+"  "+r.getString(2)+"  "+r.getString(3)+"  "+r.getString(4)+"  "+r.getString(5);
+		            	  out.println(userData);
+		              }
+		              break;*/
+		              
+		      default: out.println("Please enter a valid choice.");
+		    }
+		}
+		
+	}
+	
+	static Connection database_connect()throws Exception {
+		
+		String db_name = "jdbc:mysql://localhost:3306/bus_booking";
+		String user_name = "root";
+		String pass = "saikat218212";
+		
+		Class.forName("com.mysql.jdbc.Driver");
+		Connection con = DriverManager.getConnection(db_name,user_name,pass);
+		return con;
+		
+	}
+
+}
+
+

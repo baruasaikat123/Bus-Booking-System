@@ -1,0 +1,12 @@
+package Home;
+
+public class Permission {
+	
+	void user_permission() {
+		
+		while(true) {
+			
+			
+		}
+	}
+}

@@ -1,0 +1,36 @@
+package Home;
+import java.util.*;
+import static java.lang.System.*;
+public class Permission {
+	
+	Scanner sc = new Scanner(System.in);
+			
+	void user_permission() {
+		
+		while(true) {
+			
+			out.println("***************************************************************************");
+			out.println("1. Search Bus\n2. Check Seat Availability\n3. Book Ticket\n4. Log out");
+			out.println("***************************************************************************");
+			out.print("Enter choice: ");
+			int choice = sc.nextInt();
+			switch(choice) {
+			
+			case 1: out.println("SEARCH BUS");
+			        break;
+			
+			case 2: out.println("Check Seat");
+			        break;
+			
+			case 3: out.println("Book Ticket");
+			        break;
+			        
+			case 4: sign = 1;
+			
+			default: out.println("Enter a valid choice.");
+			
+			}
+			
+		}
+	}
+}
